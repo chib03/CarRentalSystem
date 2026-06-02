@@ -1,0 +1,42 @@
+@model CarRentalSystem.Models.DashboardViewModel
+@{ ViewData["Title"] = "Admin Dashboard"; }
+<div class="page-header mb-4">
+    <h1 class="page-title"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
+    <span class="text-muted" style="font-size:14px">@DateTime.Now.ToString("dddd, MMMM dd, yyyy")</span>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6"><div class="stat-card blue"><div class="stat-icon blue"><i class="fas fa-car"></i></div><div><div class="stat-value">@Model.TotalCars</div><div class="stat-label">Total Cars</div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="stat-card green"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div><div class="stat-value">@Model.AvailableCars</div><div class="stat-label">Available</div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="stat-card red"><div class="stat-icon red"><i class="fas fa-car-side"></i></div><div><div class="stat-value">@Model.RentedCars</div><div class="stat-label">Rented</div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="stat-card purple"><div class="stat-icon purple"><i class="fas fa-users"></i></div><div><div class="stat-value">@Model.TotalCustomers</div><div class="stat-label">Customers</div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="stat-card orange"><div class="stat-icon orange"><i class="fas fa-file-contract"></i></div><div><div class="stat-value">@Model.TotalRentals</div><div class="stat-label">Total Rentals</div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="stat-card teal"><div class="stat-icon teal"><i class="fas fa-spinner"></i></div><div><div class="stat-value">@Model.ActiveRentals</div><div class="stat-label">Active</div></div></div></div>
+    <div class="col-md-6"><div class="stat-card pink"><div class="stat-icon pink"><i class="fas fa-peso-sign"></i></div><div><div class="stat-value">₱@Model.TotalRevenue.ToString("N0")</div><div class="stat-label">Total Revenue</div></div></div></div>
+</div>
+<div class="table-card p-3 d-flex gap-2 flex-wrap mb-4">
+    <strong class="me-2 align-self-center text-muted" style="font-size:13px">QUICK ACTIONS:</strong>
+    <a asp-controller="Cars" asp-action="Create" class="btn-primary-custom"><i class="fas fa-plus"></i>Add Car</a>
+    <a asp-controller="Rentals" asp-action="Create" class="btn-accent"><i class="fas fa-plus"></i>New Rental</a>
+</div>
+<div class="table-card">
+    <div class="table-header"><h6 class="fw-bold mb-0"><i class="fas fa-history me-2"></i>Recent Rentals</h6><a asp-controller="Rentals" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a></div>
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead><tr><th>#</th><th>Customer</th><th>Car</th><th>Rental Date</th><th>Return Date</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+                @foreach (var r in Model.RecentRentals)
+                {
+                    <tr>
+                        <td>@r.Id</td><td>@r.Customer?.FullName</td>
+                        <td>@r.Car?.Brand @r.Car?.Model</td>
+                        <td>@r.RentalDate.ToString("MMM dd, yyyy")</td>
+                        <td>@r.ReturnDate.ToString("MMM dd, yyyy")</td>
+                        <td>₱@r.TotalAmount.ToString("N2")</td>
+                        <td><span class="status-badge status-@r.Status.ToLower()">@r.Status</span></td>
+                    </tr>
+                }
+                @if (!Model.RecentRentals.Any()) { <tr><td colspan="7" class="text-center text-muted py-4">No rentals yet.</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+@model CarRentalSystem.Models.Car
+@{ ViewData["Title"] = "Edit Car"; }
+<div class="page-header"><h1 class="page-title"><i class="fas fa-edit me-2"></i>Edit Car</h1></div>
+<div class="form-card">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedAt" />
+        <div class="row g-3">
+            <div class="col-md-6"><label asp-for="Brand" class="form-label">Brand</label><input asp-for="Brand" class="form-control" /><span asp-validation-for="Brand" class="text-danger small"></span></div>
+            <div class="col-md-6"><label asp-for="Model" class="form-label">Model</label><input asp-for="Model" class="form-control" /><span asp-validation-for="Model" class="text-danger small"></span></div>
+            <div class="col-md-4"><label asp-for="Year" class="form-label">Year</label><input asp-for="Year" type="number" class="form-control" /></div>
+            <div class="col-md-4"><label asp-for="PlateNumber" class="form-label">Plate Number</label><input asp-for="PlateNumber" class="form-control" /></div>
+            <div class="col-md-4"><label asp-for="Color" class="form-label">Color</label><input asp-for="Color" class="form-control" /></div>
+            <div class="col-md-6"><label asp-for="DailyRate" class="form-label">Daily Rate (₱)</label><input asp-for="DailyRate" type="number" step="0.01" class="form-control" /></div>
+            <div class="col-md-6"><label asp-for="Status" class="form-label">Status</label><select asp-for="Status" class="form-select"><option>Available</option><option>Rented</option></select></div>
+            <div class="col-12"><label asp-for="Description" class="form-label">Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn-primary-custom"><i class="fas fa-save me-1"></i>Update Car</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

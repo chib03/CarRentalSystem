@@ -1,0 +1,77 @@
+@model CarRentalSystem.Models.RentalCreateViewModel
+@{ ViewData["Title"] = "Book a Car"; var car = Model.AvailableCars.FirstOrDefault(); var today = DateTime.Today.ToString("yyyy-MM-dd"); var tomorrow = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"); }
+<div class="page-header">
+    <h1 class="page-title"><i class="fas fa-calendar-plus me-2"></i>Book a Car</h1>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+</div>
+<div class="row g-4">
+    @if (car != null)
+    {
+        <div class="col-md-4">
+            <div class="car-card">
+                <div class="car-card-header"><div class="car-icon">🚗</div><div class="car-name">@car.Brand @car.Model</div><small>@car.Year &bull; @car.Color</small></div>
+                <div class="car-card-body">
+                    <div class="car-info-row"><span class="text-muted">Plate</span><strong>@car.PlateNumber</strong></div>
+                    <div class="car-info-row"><span class="text-muted">Type</span><span>@(car.Description ?? "-")</span></div>
+                    <div class="car-price">₱@car.DailyRate.ToString("N0")<small style="font-size:13px;font-weight:400">/day</small></div>
+                    <span class="status-badge status-available">Available</span>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-md-8">
+        <div class="form-card">
+            <h5 class="fw-bold mb-4"><i class="fas fa-calendar-alt me-2 text-primary"></i>Booking Details</h5>
+            @if (!ViewData.ModelState.IsValid) { <div class="alert alert-danger">@Html.ValidationSummary(false)</div> }
+            <form asp-action="BookRequest" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="CarId" value="@car?.Id" />
+                <input type="hidden" name="CustomerId" value="@Model.CustomerId" />
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Rental Date</label>
+                        <input type="date" name="RentalDate" id="RentalDate" class="form-control" value="@today" min="@today" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Return Date</label>
+                        <input type="date" name="ReturnDate" id="ReturnDate" class="form-control" value="@tomorrow" min="@tomorrow" required />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-medium">Notes <span class="text-muted fw-normal">(optional)</span></label>
+                        <textarea name="Notes" class="form-control" rows="3" placeholder="Any special requests..."></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 p-4 rounded-3" style="background:#f0fdf4;border:1.5px solid #bbf7d0;">
+                    <h6 class="fw-bold mb-3" style="color:#065f46"><i class="fas fa-receipt me-2"></i>Price Summary</h6>
+                    <div class="d-flex justify-content-between mb-2" style="font-size:14px"><span class="text-muted">Daily Rate</span><span class="fw-semibold">₱@car?.DailyRate.ToString("N2")/day</span></div>
+                    <div class="d-flex justify-content-between mb-2" style="font-size:14px"><span class="text-muted">Number of Days</span><span class="fw-semibold" id="totalDays">1 day</span></div>
+                    <hr class="my-2"/>
+                    <div class="d-flex justify-content-between"><span class="fw-bold">Estimated Total</span><span class="fw-bold fs-5 text-success" id="totalAmount">₱@car?.DailyRate.ToString("N2")</span></div>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn-accent px-4"><i class="fas fa-paper-plane me-1"></i>Submit Booking</button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script>
+const rate = @(car?.DailyRate ?? 0);
+function calc() {
+    const r = document.getElementById('RentalDate').value, ret = document.getElementById('ReturnDate').value;
+    if (r && ret) {
+        const days = Math.max(1, Math.round((new Date(ret)-new Date(r))/86400000));
+        document.getElementById('totalDays').textContent = days + (days===1?' day':' days');
+        document.getElementById('totalAmount').textContent = '₱'+(rate*days).toLocaleString('en-PH',{minimumFractionDigits:2});
+    }
+}
+document.getElementById('RentalDate').addEventListener('change', function(){
+    const r=new Date(this.value), ret=new Date(document.getElementById('ReturnDate').value);
+    if(ret<=r){const n=new Date(r);n.setDate(n.getDate()+1);document.getElementById('ReturnDate').value=n.toISOString().split('T')[0];}
+    calc();
+});
+document.getElementById('ReturnDate').addEventListener('change', calc);
+calc();
+</script>}

@@ -1,0 +1,55 @@
+@model List<CarRentalSystem.Models.RentalTransaction>
+@{ ViewData["Title"] = "Rental Transactions"; }
+<div class="page-header">
+    <h1 class="page-title"><i class="fas fa-file-contract me-2"></i>Rental Transactions</h1>
+    <a asp-action="Create" class="btn-primary-custom"><i class="fas fa-plus"></i>New Rental</a>
+</div>
+<form method="get" class="table-card p-3 mb-4 d-flex gap-2 flex-wrap align-items-end">
+    <div>
+        <label class="form-label mb-1" style="font-size:13px">Search</label>
+        <input name="search" value="@ViewBag.Search" class="form-control form-control-sm" placeholder="Customer or car name..." style="min-width:220px" />
+    </div>
+    <div>
+        <label class="form-label mb-1" style="font-size:13px">Status</label>
+        <select name="status" class="form-select form-select-sm">
+            <option value="">All</option>
+            <option value="Pending" selected="@(ViewBag.Status=="Pending")">Pending</option>
+            <option value="Active" selected="@(ViewBag.Status=="Active")">Active</option>
+            <option value="Completed" selected="@(ViewBag.Status=="Completed")">Completed</option>
+            <option value="Cancelled" selected="@(ViewBag.Status=="Cancelled")">Cancelled</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-sm btn-primary align-self-end">Filter</button>
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary align-self-end">Reset</a>
+</form>
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead><tr><th>#</th><th>Customer</th><th>Car</th><th>Rental Date</th><th>Return Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.Id</td>
+                        <td><strong>@r.Customer?.FullName</strong></td>
+                        <td>@r.Car?.Brand @r.Car?.Model<br/><small class="text-muted">@r.Car?.PlateNumber</small></td>
+                        <td>@r.RentalDate.ToString("MMM dd, yyyy")</td>
+                        <td>@r.ReturnDate.ToString("MMM dd, yyyy")</td>
+                        <td>₱@r.TotalAmount.ToString("N2")</td>
+                        <td><span class="status-badge status-@r.Status.ToLower()">@r.Status</span></td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-eye"></i></a>
+                            <a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-sm btn-outline-warning me-1"><i class="fas fa-edit"></i></a>
+                            <form asp-action="Delete" asp-route-id="@r.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger btn-delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="8" class="text-center text-muted py-4">No rental transactions found.</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section Scripts { <script src="~/js/site.js"></script> }

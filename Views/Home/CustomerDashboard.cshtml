@@ -1,0 +1,53 @@
+@model List<CarRentalSystem.Models.Car>
+@{ ViewData["Title"] = "Dashboard"; var myRentals = ViewBag.MyRentals as List<CarRentalSystem.Models.RentalTransaction>; var customer = ViewBag.Customer as CarRentalSystem.Models.Customer; var firstName = customer?.FullName?.Split(' ')[0] ?? User.Identity?.Name ?? "there"; }
+<div class="page-header mb-4">
+    <h1 class="page-title"><i class="fas fa-home me-2"></i>Welcome, @firstName!</h1>
+    <span class="text-muted" style="font-size:14px">@DateTime.Now.ToString("dddd, MMMM dd, yyyy")</span>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat-card green"><div class="stat-icon green"><i class="fas fa-car"></i></div><div><div class="stat-value">@Model.Count</div><div class="stat-label">Cars Available</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card blue"><div class="stat-icon blue"><i class="fas fa-file-contract"></i></div><div><div class="stat-value">@(myRentals?.Count ?? 0)</div><div class="stat-label">My Bookings</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card orange"><div class="stat-icon orange"><i class="fas fa-clock"></i></div><div><div class="stat-value">@(myRentals?.Count(r => r.Status == "Pending") ?? 0)</div><div class="stat-label">Pending</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card teal"><div class="stat-icon teal"><i class="fas fa-check-circle"></i></div><div><div class="stat-value">@(myRentals?.Count(r => r.Status == "Completed") ?? 0)</div><div class="stat-label">Completed</div></div></div></div>
+</div>
+<h5 class="fw-bold mb-3"><i class="fas fa-car me-2 text-primary"></i>Available Cars for Rent</h5>
+@if (Model.Any())
+{
+    <div class="car-grid mb-5">
+        @foreach (var car in Model)
+        {
+            <div class="car-card">
+                <div class="car-card-header">
+                    <div class="car-icon">🚗</div>
+                    <div class="car-name">@car.Brand @car.Model</div>
+                    <small>@car.Year &bull; @car.Color</small>
+                </div>
+                <div class="car-card-body">
+                    <div class="car-info-row"><span class="text-muted">Plate</span><strong>@car.PlateNumber</strong></div>
+                    <div class="car-info-row"><span class="text-muted">Type</span><span>@(car.Description ?? "-")</span></div>
+                    <div class="car-price">₱@car.DailyRate.ToString("N0")<small style="font-size:13px;font-weight:400">/day</small></div>
+                    <span class="status-badge status-available d-inline-block mb-3">Available</span>
+                    <div>
+                        <a asp-controller="Rentals" asp-action="BookRequest" asp-route-carId="@car.Id" class="btn-primary-custom w-100 justify-content-center">
+                            <i class="fas fa-calendar-plus me-1"></i>Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else { <div class="alert alert-info mb-5"><i class="fas fa-info-circle me-2"></i>No cars available right now. Check back later.</div> }
+<h5 class="fw-bold mb-3"><i class="fas fa-history me-2 text-primary"></i>My Rental History</h5>
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead><tr><th>Car</th><th>Rental Date</th><th>Return Date</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody>
+                @if (myRentals != null && myRentals.Any())
+                { @foreach (var r in myRentals) { <tr><td><strong>@r.Car?.Brand @r.Car?.Model</strong><br/><small class="text-muted">@r.Car?.PlateNumber</small></td><td>@r.RentalDate.ToString("MMM dd, yyyy")</td><td>@r.ReturnDate.ToString("MMM dd, yyyy")</td><td>₱@r.TotalAmount.ToString("N2")</td><td><span class="status-badge status-@r.Status.ToLower()">@r.Status</span></td></tr> } }
+                else { <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-car me-2 opacity-50"></i>No bookings yet. Book a car above!</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

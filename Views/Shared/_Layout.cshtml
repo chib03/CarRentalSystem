@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DriveEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="d-flex" id="wrapper">
+
+            <nav id="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo-icon"><i class="fas fa-car"></i></div>
+                    <span class="logo-text">DriveEase</span>
+                </div>
+
+                <ul class="sidebar-nav list-unstyled">
+
+                    <li>
+                        <a asp-controller="Home" asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Cars" asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Cars" ? "active" : "")">
+                            <i class="fas fa-car"></i>
+                            <span>Cars</span>
+                        </a>
+                    </li>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li>
+                            <a asp-controller="Rentals" asp-action="Index"
+                               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Rentals" ? "active" : "")">
+                                <i class="fas fa-file-contract"></i>
+                                <span>Rentals</span>
+                            </a>
+                        </li>
+                    }
+
+                    <li class="nav-spacer"></li>
+                    <li class="nav-divider"></li>
+
+                    <li>
+                        <a asp-controller="Account" asp-action="Profile"
+                           class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Account" && ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")">
+                            <i class="fas fa-user-circle"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </li>
+
+                </ul>
+            </nav>
+
+            <div id="content-wrapper">
+
+                <nav class="top-bar">
+                    <button id="sidebarToggle" aria-label="Toggle sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="top-bar-right">
+                        <span class="badge-role @(User.IsInRole("Admin") ? "badge-admin" : "badge-customer")">
+                            <i class="fas fa-@(User.IsInRole("Admin") ? "shield-alt" : "user")"></i>
+                            @(User.IsInRole("Admin") ? "Admin" : "Customer")
+                        </span>
+                        <span class="user-name">@User.Identity?.Name</span>
+                    </div>
+                </nav>
+
+                <main class="main-content">
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @RenderBody()
+
+                </main>
+
+            </div>
+        </div>
+    }
+    else
+    {
+        @RenderBody()
+    }
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+
+</body>
+</html>

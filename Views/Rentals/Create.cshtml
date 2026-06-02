@@ -1,0 +1,60 @@
+@model CarRentalSystem.Models.RentalCreateViewModel
+@{ ViewData["Title"] = "Create Rental"; }
+<div class="page-header"><h1 class="page-title"><i class="fas fa-plus me-2"></i>Create New Rental</h1></div>
+<div class="form-card" style="max-width:700px">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        @if (!ViewData.ModelState.IsValid) {
+            <div class="alert alert-danger">@Html.ValidationSummary(false)</div>
+        }
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="CustomerId" class="form-label">Customer</label>
+                <select asp-for="CustomerId" class="form-select" asp-items="@(new SelectList(Model.Customers, "Id", "FullName"))">
+                    <option value="">-- Select Customer --</option>
+                </select>
+                <span asp-validation-for="CustomerId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="CarId" class="form-label">Car</label>
+                <select asp-for="CarId" id="CarId" class="form-select">
+                    <option value="">-- Select Car --</option>
+                    @foreach (var car in Model.AvailableCars)
+                    {
+                        <option value="@car.Id" data-rate="@car.DailyRate">
+                            @car.Brand @car.Model (@car.PlateNumber) - ₱@car.DailyRate.ToString("N0")/day
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="CarId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="RentalDate" class="form-label">Rental Date</label>
+                <input asp-for="RentalDate" type="date" id="RentalDate" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="ReturnDate" class="form-label">Return Date</label>
+                <input asp-for="ReturnDate" type="date" id="ReturnDate" class="form-control" />
+            </div>
+            <div class="col-12">
+                <label asp-for="Notes" class="form-label">Notes (Optional)</label>
+                <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+            </div>
+        </div>
+
+        <div class="mt-3 p-3 rounded" style="background:#f8fafc;border:1px solid #e5e7eb;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><span class="text-muted small">Daily Rate: </span><span id="rateDisplay" class="fw-bold">Select a car</span></div>
+                <div><span class="text-muted small">Duration: </span><span id="totalDays" class="fw-bold">-</span></div>
+                <div><span class="text-muted small">Total: </span><span id="totalAmount" class="fw-bold text-primary fs-5">-</span></div>
+            </div>
+        </div>
+        <input type="hidden" id="dailyRate" value="0" />
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn-accent"><i class="fas fa-check me-1"></i>Create Rental</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+@section Scripts { <script src="~/js/site.js"></script> }

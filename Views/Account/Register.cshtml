@@ -1,0 +1,76 @@
+﻿@model CarRentalSystem.Models.RegisterViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - DriveEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+<div class="login-page">
+    <div class="login-card" style="max-width:460px">
+        <div class="login-logo">
+            <div class="icon"><i class="fas fa-car"></i></div>
+            <div class="login-title">Create Account</div>
+            <div class="login-subtitle">Register to start renting cars</div>
+        </div>
+        @if (!ViewData.ModelState.IsValid)
+        { <div class="alert alert-danger py-2 mb-3">@Html.ValidationSummary(false, null, new { @class="mb-0" })</div> }
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label">Full Name</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
+                    <input asp-for="FullName" class="form-control" placeholder="Juan dela Cruz" />
+                </div>
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-at text-muted"></i></span>
+                    <input asp-for="Username" class="form-control" placeholder="juandelacruz" />
+                </div>
+                <span asp-validation-for="Username" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Gmail Address</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope text-muted"></i></span>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="yourname@gmail.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger small"></span>
+                <small class="text-muted">A 6-digit code will be sent here.</small>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock text-muted"></i></span>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Min. 6 characters + number" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+            <div class="mb-4">
+                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock text-muted"></i></span>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Repeat your password" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn-login">
+                <i class="fas fa-paper-plane me-2"></i>Create Account &amp; Send Code
+            </button>
+        </form>
+        <div class="text-center mt-4">
+            <span class="text-muted" style="font-size:14px">Already have an account?</span>
+            <a asp-action="Login" class="ms-1 fw-semibold" style="color:#1a3a5c;font-size:14px">Sign In</a>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body></html>

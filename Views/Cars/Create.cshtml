@@ -1,0 +1,22 @@
+@model CarRentalSystem.Models.Car
+@{ ViewData["Title"] = "Add New Car"; }
+<div class="page-header"><h1 class="page-title"><i class="fas fa-plus me-2"></i>Add New Car</h1></div>
+<div class="form-card">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row g-3">
+            <div class="col-md-6"><label asp-for="Brand" class="form-label">Brand</label><input asp-for="Brand" class="form-control" placeholder="Toyota, Honda..." /><span asp-validation-for="Brand" class="text-danger small"></span></div>
+            <div class="col-md-6"><label asp-for="Model" class="form-label">Model</label><input asp-for="Model" class="form-control" placeholder="Vios, City..." /><span asp-validation-for="Model" class="text-danger small"></span></div>
+            <div class="col-md-4"><label asp-for="Year" class="form-label">Year</label><input asp-for="Year" type="number" class="form-control" min="2000" max="2030" /><span asp-validation-for="Year" class="text-danger small"></span></div>
+            <div class="col-md-4"><label asp-for="PlateNumber" class="form-label">Plate Number</label><input asp-for="PlateNumber" class="form-control" placeholder="ABC-1234" /><span asp-validation-for="PlateNumber" class="text-danger small"></span></div>
+            <div class="col-md-4"><label asp-for="Color" class="form-label">Color</label><input asp-for="Color" class="form-control" placeholder="White, Black..." /></div>
+            <div class="col-md-6"><label asp-for="DailyRate" class="form-label">Daily Rate (₱)</label><input asp-for="DailyRate" type="number" step="0.01" class="form-control" /><span asp-validation-for="DailyRate" class="text-danger small"></span></div>
+            <div class="col-md-6"><label asp-for="Status" class="form-label">Status</label><select asp-for="Status" class="form-select"><option>Available</option><option>Rented</option></select></div>
+            <div class="col-12"><label asp-for="Description" class="form-label">Description</label><textarea asp-for="Description" class="form-control" rows="2" placeholder="Optional description..."></textarea></div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn-primary-custom"><i class="fas fa-save me-1"></i>Save Car</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

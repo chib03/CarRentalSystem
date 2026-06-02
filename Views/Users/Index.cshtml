@@ -1,0 +1,81 @@
+@model List<CarRentalSystem.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="page-header">
+    <h1 class="page-title"><i class="fas fa-user-cog me-2"></i>User Management</h1>
+    <a asp-action="Create" class="btn-primary-custom"><i class="fas fa-plus"></i>Add User</a>
+</div>
+
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th> 
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td><strong>@(u.FullName ?? "N/A")</strong></td>
+                        <td>@u.UserName</td>
+                        <td>@u.Email</td>
+
+                        <td>
+                            <span class="status-badge @(u.Role == "Admin" ? "status-active" : "status-completed")">
+                                @(u.Role ?? "User")
+                            </span>
+                        </td>
+
+                        <td>
+                            @if (u.IsEmailVerified)
+                            {
+                                <span class="badge bg-success text-white">Verified</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending OTP</span>
+                            }
+                        </td>
+
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-outline-warning me-1">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <form asp-action="Delete" asp-route-id="@u.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            No users found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/site.js"></script>
+}
